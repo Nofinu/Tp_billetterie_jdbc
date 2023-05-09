@@ -30,24 +30,12 @@ public class Lieu {
         return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
     public String getAdresse() {
         return adresse;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
     public int getCapacite() {
         return capacite;
-    }
-
-    public void setCapacite(int capacite) {
-        this.capacite = capacite;
     }
 
     @Override

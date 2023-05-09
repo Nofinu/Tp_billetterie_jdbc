@@ -15,10 +15,6 @@ public class Billet {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -27,16 +23,8 @@ public class Billet {
         return client;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public Evenement getEvenement() {
         return evenement;
-    }
-
-    public void setEvenement(Evenement evenement) {
-        this.evenement = evenement;
     }
 
     @Override

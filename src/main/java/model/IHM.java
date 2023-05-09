@@ -87,6 +87,7 @@ public class IHM {
         System.out.println("11-- acheter un billet ");
         System.out.println("12-- annuler un billet");
         System.out.println("13-- afficher les billets d'un client");
+        System.out.println("-------------");
     }
 
     // menu de recuperation des information
