@@ -31,7 +31,7 @@ public class LieuDAO extends BaseDAO<Lieu> {
 
     @Override
     public boolean update(Lieu element) throws SQLException {
-        request = "UPDATE lieu SET nom = ? , adresse = ? capacite = ? WHERE id =?";
+        request = "UPDATE lieu SET nom = ? , adresse = ?, capacite = ? WHERE id =?";
         statement = _connection.prepareStatement(request);
         statement.setString(1,element.getNom());
         statement.setString(2,element.getAdresse());
@@ -43,12 +43,7 @@ public class LieuDAO extends BaseDAO<Lieu> {
 
     @Override
     public boolean delete(int id) throws SQLException {
-        String requestEvent = "DELETE FROM evenement WHERE id_lieu = ?";
         request = "DELETE FROM lieu WHERE id = ?";
-        statement = _connection.prepareStatement(requestEvent);
-        statement.setInt(1,id);
-        statement.executeUpdate();
-
         statement = _connection.prepareStatement(request);
         statement.setInt(1,id);
         int rows2 = statement.executeUpdate();

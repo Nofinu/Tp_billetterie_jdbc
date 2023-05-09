@@ -1,6 +1,7 @@
 package dao;
 
 import jdk.jshell.spi.ExecutionControl;
+import model.Billet;
 import model.Client;
 import model.Lieu;
 
@@ -45,6 +46,15 @@ public class ClientDao extends BaseDAO<Client> {
 
     @Override
     public boolean delete(int id) throws SQLException {
+        String requestBillet = "SELECT (billet.id)as id_billet FROM billet WHERE id_client = ?";
+        statement = _connection.prepareStatement(requestBillet);
+        statement.setInt(1,id);
+        resultSet = statement.executeQuery();
+        while (resultSet.next()){
+            BilletDAO billetDAO = new BilletDAO(_connection);
+            billetDAO.delete(resultSet.getInt("id_billet"));
+        }
+
         request = "DELETE FROM clients WHERE id =?";
         statement = _connection.prepareStatement(request);
         statement.setInt(1,id);
@@ -70,14 +80,14 @@ public class ClientDao extends BaseDAO<Client> {
     @Override
     public Client findById(int id) throws SQLException {
         Client client = null;
-        request = "SELECT id,prenom,email FROM clients WHERE id = ?";
+        request = "SELECT id,nom,prenom,email FROM clients WHERE id = ?";
         statement = _connection.prepareStatement(request);
         statement.setInt(1,id);
         resultSet = statement.executeQuery();
         if(resultSet.next()){
             client = new Client(resultSet.getInt("id"),
                     resultSet.getString("nom"),
-                    resultSet.getString("adresse"),
+                    resultSet.getString("prenom"),
                     resultSet.getString("email"));
         }
         return client;

@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EvenementDAO extends BaseDAO<Evenement> {
@@ -62,20 +63,25 @@ public class EvenementDAO extends BaseDAO<Evenement> {
     @Override
     public List<Evenement> findAll() throws SQLException {
         List<Evenement> evenements = new ArrayList<>();
-        request = "SELECT id,nom,date,heure,id_lieu,prix,nbr_billet_vendu,(lieu.nom) as nom_lieu,adresse,capacite FROM evenement INNER JOIN lieu";
+        request = "SELECT evenement.id as id_event,evenement.nom as nom_event,date,heure,id_lieu,prix,nbr_billet_vendu,(lieu.nom) as nom_lieu,adresse,capacite FROM evenement INNER JOIN lieu";
         statement = _connection.prepareStatement(request);
         resultSet = statement.executeQuery();
         while (resultSet.next()){
-            evenements.add(new Evenement(resultSet.getInt("id"),
-                    resultSet.getString("nom"),
-                    resultSet.getDate("date"),
+            int capacite = resultSet.getInt("capacite");
+            int nbrBilletVendu = resultSet.getInt("nbr_billet_vendu");
+            Date date = resultSet.getDate("date");
+            Date dateNow = new java.util.Date();
+            if(capacite>nbrBilletVendu && date.compareTo(dateNow)>0)
+            evenements.add(new Evenement(resultSet.getInt("id_event"),
+                    resultSet.getString("nom_event"),
+                    date,
                     resultSet.getString("heure"),
                     new Lieu(resultSet.getInt("id_lieu"),
                             resultSet.getString("nom_lieu"),
                             resultSet.getString("adresse"),
-                            resultSet.getInt("capacite")),
+                            capacite),
                     resultSet.getFloat("prix"),
-                    resultSet.getInt("nbr_billet_vendu")
+                    nbrBilletVendu
                     ));
         }
         return evenements;
@@ -84,13 +90,13 @@ public class EvenementDAO extends BaseDAO<Evenement> {
     @Override
     public Evenement findById(int id) throws SQLException {
         Evenement evenement = null;
-        request = "SELECT id,nom,date,heure,id_lieu,prix,nbr_billet_vendu,(lieu.nom) as nom_lieu,adresse,capacite FROM evenement INNER JOIN lieu WHERE id = ?";
+        request = "SELECT (evenement.id) as id_evenement,(evenement.nom) as nom_event,date,heure,id_lieu,prix,nbr_billet_vendu,(lieu.nom) as nom_lieu,adresse,capacite FROM evenement INNER JOIN lieu WHERE evenement.id = ?";
         statement = _connection.prepareStatement(request);
         statement.setInt(1,id);
         resultSet = statement.executeQuery();
         if (resultSet.next()){
-            evenement = new Evenement(resultSet.getInt("id"),
-                    resultSet.getString("nom"),
+            evenement = new Evenement(resultSet.getInt("id_evenement"),
+                    resultSet.getString("nom_event"),
                     resultSet.getDate("date"),
                     resultSet.getString("heure"),
                     new Lieu(resultSet.getInt("id_lieu"),
@@ -104,5 +110,13 @@ public class EvenementDAO extends BaseDAO<Evenement> {
         return evenement;
     }
 
+    public boolean updateNbrTicket (Evenement event) throws SQLException{
+        request = "UPDATE evenement SET nbr_billet_vendu = ? WHERE id = ?";
+        statement = _connection.prepareStatement(request);
+        statement.setInt(1,event.getNbrBilletVendu());
+        statement.setInt(2,event.getId());
+        int rows = statement.executeUpdate();
+        return rows == 1;
+    }
 
 }

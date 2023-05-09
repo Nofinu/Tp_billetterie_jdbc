@@ -49,4 +49,14 @@ public class Lieu {
     public void setCapacite(int capacite) {
         this.capacite = capacite;
     }
+
+    @Override
+    public String toString() {
+        return "Lieu{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", capacite=" + capacite +
+                '}';
+    }
 }

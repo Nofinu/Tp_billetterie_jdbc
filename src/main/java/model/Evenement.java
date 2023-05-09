@@ -25,12 +25,13 @@ public class Evenement {
         this.nbrBilletVendu = nbrBilletVendu;
     }
 
-    public String getNom() {
-        return nom;
+    public Evenement(int id, int nbrBilletVendu) {
+        this.id = id;
+        this.nbrBilletVendu = nbrBilletVendu;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public String getNom() {
+        return nom;
     }
 
     public int getId() {
@@ -45,39 +46,40 @@ public class Evenement {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public String getHeure() {
         return heure;
-    }
-
-    public void setHeure(String heure) {
-        this.heure = heure;
     }
 
     public Lieu getLieu() {
         return lieu;
     }
 
-    public void setLieu(Lieu lieu) {
-        this.lieu = lieu;
-    }
-
     public float getPrix() {
         return prix;
-    }
-
-    public void setPrix(float prix) {
-        this.prix = prix;
     }
 
     public int getNbrBilletVendu() {
         return nbrBilletVendu;
     }
 
-    public void setNbrBilletVendu(int nbrBilletVendu) {
-        this.nbrBilletVendu = nbrBilletVendu;
+    public void venteTicket (){
+        this.nbrBilletVendu ++;
+    }
+
+    public void annulationTicket (){
+        this.nbrBilletVendu --;
+    }
+
+    @Override
+    public String toString() {
+        return "Evenement{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", date=" + date +
+                ", heure='" + heure + '\'' +
+                ", lieu=" + lieu +
+                ", prix=" + prix +
+                ", nbrBilletVendu=" + nbrBilletVendu +
+                '}';
     }
 }
