@@ -1,6 +1,6 @@
 package org.example;
 
-import model.IHM;
+import org.example.util.IHM;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.

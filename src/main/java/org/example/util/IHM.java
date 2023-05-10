@@ -1,5 +1,7 @@
-package model;
+package org.example.util;
 
+import model.Client;
+import model.Lieu;
 import service.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +10,6 @@ import java.util.*;
 public class IHM {
 
     private Scanner scanner;
-
     private ServiceEvenement serviceEvenement;
     private ServiceLieu serviceLieu;
     private ServiceCLient serviceCLient;
