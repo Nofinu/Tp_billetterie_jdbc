@@ -7,6 +7,7 @@ import model.Billet;
 import model.Client;
 import model.Evenement;
 import org.example.util.DatabaseManager;
+import org.example.util.TypeBillet;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public class ServiceBillet {
         }
     }
 
-    public boolean addBilletAction (int idClient,int idEvent){
+    public boolean addBilletAction (int idClient, int idEvent, TypeBillet typeBillet){
         try{
             connection = new DatabaseManager().getConnection();
             clientDao = new ClientDao(connection);
@@ -38,7 +39,7 @@ public class ServiceBillet {
             evenementDAO = new EvenementDAO(connection);
             Evenement event = evenementDAO.findById(idEvent);
             if(client != null && event != null){
-                Billet billet = new Billet(client,event);
+                Billet billet = new Billet(client,event,typeBillet);
                 billetDAO = new BilletDAO(connection);
                 if(billetDAO.save(billet)){
                     event.venteTicket();

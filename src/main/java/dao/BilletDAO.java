@@ -5,6 +5,7 @@ import model.Billet;
 import model.Client;
 import model.Evenement;
 import org.example.util.DatabaseManager;
+import org.example.util.TypeBillet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,10 +22,11 @@ public class BilletDAO extends BaseDAO<Billet> {
 
     @Override
     public boolean save(Billet element) throws SQLException {
-        request = "INSERT INTO billet(id_client,id_evenement) VALUES (?,?)";
+        request = "INSERT INTO billet(id_client,id_evenement,type_billet) VALUES (?,?,?)";
         statement = _connection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
         statement.setInt(1,element.getClient().getId());
         statement.setInt(2,element.getEvenement().getId());
+        statement.setString(3, element.getTypeBillet().toString());
         int rows = statement.executeUpdate();
         resultSet = statement.getGeneratedKeys();
         if(resultSet.next()){
@@ -69,7 +71,7 @@ public class BilletDAO extends BaseDAO<Billet> {
     @Override
     public Billet findById(int id) throws SQLException {
         Billet billet = null;
-        request = "SELECT b.id as id_billet,b.id_client as id_client , b.id_evenement as id_evenement FROM billet as b INNER JOIN clients as c ON b.id_client = c.id INNER JOIN evenement as e ON b.id_evenement = e.id WHERE b.id = ?;";
+        request = "SELECT b.id as id_billet,type_billet,b.id_client as id_client , b.id_evenement as id_evenement FROM billet as b INNER JOIN clients as c ON b.id_client = c.id INNER JOIN evenement as e ON b.id_evenement = e.id WHERE b.id = ?;";
         statement = _connection.prepareStatement(request);
         statement.setInt(1,id);
         resultSet = statement.executeQuery();
@@ -78,7 +80,20 @@ public class BilletDAO extends BaseDAO<Billet> {
             Evenement evenement = evenementDAO.findById(resultSet.getInt("id_evenement"));
             ClientDao clientDao = new ClientDao(_connection);
             Client client = clientDao.findById(resultSet.getInt("id_client"));
-            billet = new Billet(id,client,evenement);
+            String type = resultSet.getString("type_billet").toLowerCase();
+            TypeBillet typeBillet;
+            switch (type){
+                case "vip":
+                    typeBillet = TypeBillet.VIP;
+                    break;
+                case "gold":
+                    typeBillet = TypeBillet.GOLD;
+                    break;
+                default :
+                    typeBillet = TypeBillet.STANDARD;
+                    break;
+            }
+            billet = new Billet(id,client,evenement,typeBillet);
 
         }
         return billet;
@@ -86,7 +101,7 @@ public class BilletDAO extends BaseDAO<Billet> {
 
     public List<Billet> findAllByCLientID (int idClient) throws SQLException{
         List<Billet> billets = new ArrayList<>();
-        request = "SELECT (billet.id)as id_billet,id_evenement from billet WHERE id_client = ?";
+        request = "SELECT (billet.id)as id_billet,type_billet,id_evenement from billet WHERE id_client = ?";
         statement = _connection.prepareStatement(request);
         statement.setInt(1,idClient);
         resultSet = statement.executeQuery();
@@ -97,7 +112,20 @@ public class BilletDAO extends BaseDAO<Billet> {
             EvenementDAO evenementDAO = new EvenementDAO(connection);
             Evenement event = evenementDAO.findById(resultSet.getInt("id_evenement"));
             if(client != null && event != null){
-                billets.add(new Billet(resultSet.getInt("id_billet"),client,event));
+                String type = resultSet.getString("type_billet").toLowerCase();
+                TypeBillet typeBillet;
+                switch (type){
+                    case "vip":
+                        typeBillet = TypeBillet.VIP;
+                        break;
+                    case "gold":
+                        typeBillet = TypeBillet.GOLD;
+                        break;
+                    default :
+                        typeBillet = TypeBillet.STANDARD;
+                        break;
+                }
+                billets.add(new Billet(resultSet.getInt("id_billet"),client,event,typeBillet));
             }
         }
         return billets;

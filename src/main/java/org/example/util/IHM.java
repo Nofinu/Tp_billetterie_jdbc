@@ -61,6 +61,12 @@ public class IHM {
                 case 13 :
                     showBillet();
                     break;
+                case 14:
+                    showAllCLient();
+                    break;
+                case 15:
+                    showAllLieux();
+                    break;
             }
 
         }while(entry !=0);
@@ -85,6 +91,8 @@ public class IHM {
         System.out.println("11-- acheter un billet ");
         System.out.println("12-- annuler un billet");
         System.out.println("13-- afficher les billets d'un client");
+        System.out.println("14-- afficher tout les clients");
+        System.out.println("15-- afficher tout les lieux");
         System.out.println("-------------");
         System.out.println("0-- quitter");
     }
@@ -189,9 +197,24 @@ public class IHM {
         System.out.println("id de l'evenement");
         int idEvent = scanner.nextInt();
         scanner.nextLine();
+        System.out.println("type de billet (vip/gold/standar): ");
+        String type = scanner.nextLine().toLowerCase();
+        TypeBillet typeBillet;
+        switch (type){
+            case "vip":
+                typeBillet = TypeBillet.VIP;
+                break;
+            case "gold":
+                typeBillet = TypeBillet.GOLD;
+                break;
+            default :
+                typeBillet = TypeBillet.STANDARD;
+                break;
+        }
+
         serviceBillet = new ServiceBillet();
 
-        if(serviceBillet.addBilletAction(idCLient,idEvent)){
+        if(serviceBillet.addBilletAction(idCLient,idEvent,typeBillet)){
             System.out.println("billet acheté");
         }
     }
@@ -243,6 +266,22 @@ public class IHM {
         serviceBillet = new ServiceBillet();
         serviceBillet.showBilletAction(id).forEach(e -> System.out.println(e));
     }
+
+    public void showAllCLient(){
+        System.out.println("------ affichage des clients ------");
+        serviceCLient = new ServiceCLient();
+        serviceCLient.findAllClient().forEach(e-> System.out.println(e));
+        System.out.println();
+    }
+
+    public void showAllLieux(){
+        System.out.println("------ affichage des Lieux ------");
+        serviceLieu = new ServiceLieu();
+        serviceLieu.findAllLieu().forEach(e-> System.out.println(e));
+        System.out.println();
+    }
+
+
 
 }
 
