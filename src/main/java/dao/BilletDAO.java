@@ -39,11 +39,11 @@ public class BilletDAO extends BaseDAO<Billet> {
     }
 
     @Override
-    public boolean delete(int id) throws SQLException {
+    public boolean delete(Billet element) throws SQLException {
         String requestEvent = "SELECT (evenement.id) as id_event, nbr_billet_vendu FROM billet INNER JOIN evenement ON billet.id_evenement = evenement.id WHERE billet.id = ?";
         Evenement event = null;
         statement = _connection.prepareStatement(requestEvent);
-        statement.setInt(1,id);
+        statement.setInt(1,element.getId());
         resultSet = statement.executeQuery();
         if(resultSet.next()){
             event = new Evenement(resultSet.getInt("id_event"),resultSet.getInt("nbr_billet_vendu"));
@@ -54,7 +54,7 @@ public class BilletDAO extends BaseDAO<Billet> {
             evenementDAO.updateNbrTicket(event);
             request = "DELETE FROM billet WHERE id = ?";
             statement = _connection.prepareStatement(request);
-            statement.setInt(1,id);
+            statement.setInt(1,element.getId());
             int rows = statement.executeUpdate();
             return rows == 1;
         }
@@ -67,8 +67,21 @@ public class BilletDAO extends BaseDAO<Billet> {
     }
 
     @Override
-    public Billet findById(int id) throws ExecutionControl.NotImplementedException {
-        throw new ExecutionControl.NotImplementedException("billet");
+    public Billet findById(int id) throws SQLException {
+        Billet billet = null;
+        request = "SELECT b.id as id_billet,b.id_client as id_client , b.id_evenement as id_evenement FROM billet as b INNER JOIN clients as c ON b.id_client = c.id INNER JOIN evenement as e ON b.id_evenement = e.id WHERE b.id = ?;";
+        statement = _connection.prepareStatement(request);
+        statement.setInt(1,id);
+        resultSet = statement.executeQuery();
+        if (resultSet.next()){
+            EvenementDAO evenementDAO = new EvenementDAO(_connection);
+            Evenement evenement = evenementDAO.findById(resultSet.getInt("id_evenement"));
+            ClientDao clientDao = new ClientDao(_connection);
+            Client client = clientDao.findById(resultSet.getInt("id_client"));
+            billet = new Billet(id,client,evenement);
+
+        }
+        return billet;
     }
 
     public List<Billet> findAllByCLientID (int idClient) throws SQLException{

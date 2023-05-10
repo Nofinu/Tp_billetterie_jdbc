@@ -10,64 +10,75 @@ import org.example.util.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.List;
 
 public class ServiceBillet {
 
-    private static Scanner scanner = new Scanner(System.in);
     private static Connection connection;
     private static BilletDAO billetDAO;
     private static ClientDao clientDao;
     private static EvenementDAO evenementDAO;
 
-    public static boolean addBilletAction (){
-        System.out.println("------- achat d'un billet -------");
-        System.out.println("id du client :");
-        int idCLient = scanner.nextInt();
-        System.out.println("id de l'evenement");
-        int idEvent = scanner.nextInt();
-        scanner.nextLine();
+    public ServiceBillet(){
+        try{
+            connection = new DatabaseManager().getConnection();
+            evenementDAO = new EvenementDAO(connection);
+            billetDAO = new BilletDAO(connection);
+            clientDao = new ClientDao(connection);
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 
+    public boolean addBilletAction (int idClient,int idEvent){
         try{
             connection = new DatabaseManager().getConnection();
             clientDao = new ClientDao(connection);
-            Client client = clientDao.findById(idCLient);
+            Client client = clientDao.findById(idClient);
             evenementDAO = new EvenementDAO(connection);
             Evenement event = evenementDAO.findById(idEvent);
             if(client != null && event != null){
                 Billet billet = new Billet(client,event);
                 billetDAO = new BilletDAO(connection);
                 if(billetDAO.save(billet)){
-                    System.out.println("billet acheter");
                     event.venteTicket();
                     connection = new DatabaseManager().getConnection();
                     evenementDAO = new EvenementDAO(connection);
                     if(evenementDAO.updateNbrTicket(event)){
-                        System.out.println("nbr de billet vendu : "+event.getNbrBilletVendu());
+                        return true;
                     }
                 }
             }
-            return true;
         }catch(SQLException e){
-            System.out.println(e.getMessage());
-            return false;
+            throw new RuntimeException(e);
         }
+        return false;
     }
 
-    public static boolean showBilletAction (){
-        System.out.println("------ affichage des billets d'un client ----------");
-        System.out.println("id du client :");
-        int id = scanner.nextInt();
-        scanner.nextLine();
+    public boolean deleteBillet (int id){
+        Billet billet = null;
+        try{
+            billet = billetDAO.findById(id);
+            if(billet != null){
+                return billetDAO.delete(billet);
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
 
+    public List<Billet> showBilletAction (int id){
+        List<Billet> billets = null;
         try{
             connection = new DatabaseManager().getConnection();
             billetDAO = new BilletDAO(connection);
-            billetDAO.findAllByCLientID(id).forEach(e -> System.out.println(e));
-            return true;
+            billets = billetDAO.findAllByCLientID(id);
+            return billets;
         }catch (SQLException e){
             System.out.println(e.getMessage());
-            return false;
+
         }
+        return null;
     }
 }

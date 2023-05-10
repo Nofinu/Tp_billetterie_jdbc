@@ -1,6 +1,7 @@
 package dao;
 
 import jdk.jshell.spi.ExecutionControl;
+import model.Evenement;
 import model.Lieu;
 
 import java.sql.Connection;
@@ -42,10 +43,10 @@ public class LieuDAO extends BaseDAO<Lieu> {
     }
 
     @Override
-    public boolean delete(int id) throws SQLException {
+    public boolean delete(Lieu element) throws SQLException {
         request = "DELETE FROM lieu WHERE id = ?";
         statement = _connection.prepareStatement(request);
-        statement.setInt(1,id);
+        statement.setInt(1,element.getId());
         int rows2 = statement.executeUpdate();
         return rows2 == 1;
     }

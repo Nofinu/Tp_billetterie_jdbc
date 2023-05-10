@@ -45,19 +45,20 @@ public class ClientDao extends BaseDAO<Client> {
     }
 
     @Override
-    public boolean delete(int id) throws SQLException {
-        String requestBillet = "SELECT (billet.id)as id_billet FROM billet WHERE id_client = ?";
+    public boolean delete(Client element) throws SQLException {
+        String requestBillet = "SELECT (billet.id)as id_billet,id_evenement FROM billet WHERE id_client = ?";
         statement = _connection.prepareStatement(requestBillet);
-        statement.setInt(1,id);
+        statement.setInt(1,element.getId());
         resultSet = statement.executeQuery();
         while (resultSet.next()){
+            Billet billet = new Billet(resultSet.getInt("id_billet"));
             BilletDAO billetDAO = new BilletDAO(_connection);
-            billetDAO.delete(resultSet.getInt("id_billet"));
+            billetDAO.delete(billet);
         }
 
         request = "DELETE FROM clients WHERE id =?";
         statement = _connection.prepareStatement(request);
-        statement.setInt(1,id);
+        statement.setInt(1,element.getId());
         int rows = statement.executeUpdate();
         return rows == 1;
     }

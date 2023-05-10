@@ -15,6 +15,10 @@ public class Billet {
         this.id = id;
     }
 
+    public Billet(int id) {
+        this.id = id;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -25,6 +29,10 @@ public class Billet {
 
     public Evenement getEvenement() {
         return evenement;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

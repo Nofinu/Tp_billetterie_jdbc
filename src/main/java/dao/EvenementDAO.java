@@ -52,10 +52,10 @@ public class EvenementDAO extends BaseDAO<Evenement> {
     }
 
     @Override
-    public boolean delete(int id) throws SQLException {
+    public boolean delete(Evenement element) throws SQLException {
         request = "DELETE FROM evenement WHERE id = ?";
         statement = _connection.prepareStatement(request);
-        statement.setInt(1,id);
+        statement.setInt(1,element.getId());
         int rows = statement.executeUpdate();
         return rows ==1;
     }
